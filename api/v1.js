@@ -13,7 +13,7 @@ module.exports = function(options){
    * app.post(prefix+'endpoint', callback);
    * app.get(prefix+'endpoint', callback);
    */
-  app.all(prefix+':room', function(req, res){
+  app.all(prefix+'room/:room', function(req, res){
     var request = {
       method: req.method,
       headers: req.headers,
