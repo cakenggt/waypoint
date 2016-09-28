@@ -26,16 +26,25 @@ module.exports = function(options){
   });
 
   app.post(prefix+'request', function(req, res){
+    var grecaptcha = req.body.grecaptcha;
+    var secret = process.env.RECAPTCHA_SECRET;
     request({
-      uri: req.body.uri,
-      method: req.body.method
+      uri: 'https://www.google.com/recaptcha/api/siteverify?secret='+secret+'&response='+grecaptcha,
+      method: 'POST',
+      json: true
     }, function(error, response, body){
-      console.log(body);
-      res.json({
-        response: body
-      });
-      res.end();
+      if (body.success){
+        request({
+          uri: req.body.uri,
+          method: req.body.method
+        }, function(error, response, body){
+          console.log(body);
+          res.json({
+            response: body
+          });
+          res.end();
+        });
+      }
     });
   });
-
 };

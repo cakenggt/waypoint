@@ -121,6 +121,9 @@ var RequestControl = React.createClass({
         <input
           value={this.state.method}
           onChange={this.changeMethod}/>
+        <div
+          className="g-recaptcha"
+          data-sitekey="6LdS7QcUAAAAACyV8AWde4Uafu4taot8kwzwKL4g"></div>
         <span
           onClick={this.sendRequest}>Send Request</span>
         <RequestResponseList
@@ -133,6 +136,12 @@ var RequestControl = React.createClass({
       uri: this.state.uri,
       method: this.state.method
     };
+    var sending = {
+      uri: this.state.uri,
+      method: this.state.method,
+      grecaptcha: grecaptcha.getResponse()
+    };
+    grecaptcha.reset();
     var index = this.state.history.length;
     var history = this.state.history;
     history.push({
@@ -140,7 +149,7 @@ var RequestControl = React.createClass({
     });
     this.setState({history: history});
     $.ajax('/api/v1/request', {
-      data: request,
+      data: sending,
       method: 'POST'
     })
     .then(data => {
