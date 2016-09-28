@@ -1,5 +1,6 @@
 'use strict';
 const prefix = '/api/v1/';
+const request = require('request');
 
 module.exports = function(options){
 
@@ -22,6 +23,19 @@ module.exports = function(options){
     };
     io.to(req.params.room).emit('received', request);
     res.end();
+  });
+
+  app.post(prefix+'request', function(req, res){
+    request({
+      uri: req.body.uri,
+      method: req.body.method
+    }, function(error, response, body){
+      console.log(body);
+      res.json({
+        response: body
+      });
+      res.end();
+    });
   });
 
 };

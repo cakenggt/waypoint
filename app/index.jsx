@@ -60,6 +60,7 @@ var Room = React.createClass({
           socket={this.state.socket}
           room={this.props.params.room}
           />
+        <RequestControl/>
       </div>
     )
   }
@@ -104,28 +105,96 @@ var RequestList = React.createClass({
 });
 
 var RequestControl = React.createClass({
-  propTypes: {
-    socket: React.PropTypes.object
-  },
   getInitialState: function(){
     return {
-      history: []
-    }
-  },
-  componentWillReceiveProps: function(nextProps){
-    if (!this.props.socket && nextProps.socket){
-      nextProps.socket.on('response', (data) => {
-        //This is when the server receives a response from the request
-        var history = this.state.history;
-        history.push(data);
-        this.setState({history: history});
-      });
+      history: [],
+      uri: '',
+      method: 'GET'
     }
   },
   render: function(){
-    //Should be a control to send a request, and then a view of the history of the
-    //requests and their responses
-    return null;
+    return (
+      <div>
+        <input
+          value={this.state.uri}
+          onChange={this.changeURI}/>
+        <input
+          value={this.state.method}
+          onChange={this.changeMethod}/>
+        <span
+          onClick={this.sendRequest}>Send Request</span>
+        <RequestResponseList
+          list={this.state.history}/>
+      </div>
+    );
+  },
+  sendRequest: function(){
+    var request = {
+      uri: this.state.uri,
+      method: this.state.method
+    };
+    var index = this.state.history.length;
+    var history = this.state.history;
+    history.push({
+      request: request
+    });
+    this.setState({history: history});
+    $.ajax('/api/v1/request', {
+      data: request,
+      method: 'POST'
+    })
+    .then(data => {
+      var formattedData;
+      try {
+        formattedData = JSON.parse(data.response);
+      } catch(e) {
+        formattedData = data.response;
+      }
+      var history = this.state.history;
+      history[index].response = formattedData;
+      this.setState({history: history});
+    });
+  },
+  changeURI: function(e){
+    this.setState({uri: e.target.value});
+  },
+  changeMethod: function(e){
+    this.setState({method: e.target.value});
+  }
+});
+
+var RequestResponseList = React.createClass({
+  propTypes: {
+    list: React.PropTypes.array
+  },
+  render: function(){
+    var jsons = this.props.list.map(function(elem, i){
+      return (
+        <tr
+          key={i}>
+          <td>
+            <JSONTree
+              data={elem.request}/>
+          </td>
+          <td>
+            {
+              elem.response ?
+              <JSONTree
+                data={elem.response}/> : null
+            }
+          </td>
+        </tr>
+      );
+    });
+    return (
+      <div>
+        <table>
+          <tbody>
+            {jsons}
+          </tbody>
+        </table>
+      </div>
+    )
   }
 });
 
