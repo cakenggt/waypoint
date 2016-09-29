@@ -2,6 +2,7 @@ import 'babel-polyfill';
 import React from 'react';
 import {Router, Route, IndexRoute, IndexLink, Link, browserHistory, withRouter} from 'react-router';
 import {render} from 'react-dom';
+import Highlight from 'react-hljs';
 import {Room} from './room.jsx';
 
 var App = React.createClass({
@@ -160,9 +161,9 @@ var Instructions = React.createClass({
         <h2>Sending Requests from clients</h2>
         <div>
           You can send a post request from the command line with the following<br/>
-          <pre><code>
-            curl -X POST -d "fizz=buzz" https://api-waypoint.herokuapp.com/api/v1/room/roomName
-          </code></pre>
+          <Highlight className="bash">
+            curl -X POST -d "fizz=buzz" https:\/\/api-waypoint.herokuapp.com/api/v1/room/roomName
+          </Highlight>
         </div>
         <h2>Sending Requests from Waypoint</h2>
         <p>
