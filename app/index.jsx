@@ -54,8 +54,12 @@ var Room = React.createClass({
     });
   },
   render: function(){
+    var room = this.props.params.room;
+    var link = 'https://api-waypoint.herokuapp.com/api/v1/'+room;
     return (
       <div>
+        <h1>Room {room}</h1>
+        <span>To send a request to this room, make it to <a href={link}>{link}</a></span>
         <RequestList
           socket={this.state.socket}
           room={this.props.params.room}
@@ -121,9 +125,13 @@ var RequestControl = React.createClass({
         <input
           value={this.state.method}
           onChange={this.changeMethod}/>
-        <div
-          className="g-recaptcha"
-          data-sitekey="6LdS7QcUAAAAACyV8AWde4Uafu4taot8kwzwKL4g"></div>
+        {
+          G_RECAPTCHA_ACTIVE ?
+          <div
+            className="g-recaptcha"
+            data-sitekey="6LdS7QcUAAAAACyV8AWde4Uafu4taot8kwzwKL4g"></div> :
+          null
+        }
         <span
           onClick={this.sendRequest}>Send Request</span>
         <RequestResponseList
@@ -138,10 +146,12 @@ var RequestControl = React.createClass({
     };
     var sending = {
       uri: this.state.uri,
-      method: this.state.method,
-      grecaptcha: grecaptcha.getResponse()
+      method: this.state.method
     };
-    grecaptcha.reset();
+    if (G_RECAPTCHA_ACTIVE){
+      sending.grecaptcha = grecaptcha.getResponse();
+      grecaptcha.reset();
+    }
     var index = this.state.history.length;
     var history = this.state.history;
     history.push({

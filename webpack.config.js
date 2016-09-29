@@ -21,7 +21,12 @@ var config = {
   },
   resolve: {
     extensions: ['', '.json', '.jsx', '.js']
-  }
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+        'G_RECAPTCHA_ACTIVE': process.env.G_RECAPTCHA_ACTIVE
+    }),
+  ]
 };
 
 module.exports = config;

@@ -26,25 +26,46 @@ module.exports = function(options){
   });
 
   app.post(prefix+'request', function(req, res){
-    var grecaptcha = req.body.grecaptcha;
-    var secret = process.env.RECAPTCHA_SECRET;
-    request({
-      uri: 'https://www.google.com/recaptcha/api/siteverify?secret='+secret+'&response='+grecaptcha,
-      method: 'POST',
-      json: true
-    }, function(error, response, body){
-      if (body.success){
-        request({
-          uri: req.body.uri,
-          method: req.body.method
-        }, function(error, response, body){
-          console.log(body);
+    if (process.env.G_RECAPTCHA_ACTIVE == 'true'){
+      var grecaptcha = req.body.grecaptcha;
+      checkRecaptcha(grecaptcha, function(success){
+        if (success){
+          passOnRequest(req, res);
+        }
+        else{
           res.json({
-            response: body
+            error: 'grecaptcha inaccurate'
           });
           res.end();
-        });
-      }
-    });
+        }
+      });
+    }
+    else {
+      passOnRequest(req, res);
+    }
   });
 };
+
+function passOnRequest(req, res){
+  request({
+    uri: req.body.uri,
+    method: req.body.method
+  }, function(error, response, body){
+    res.json({
+      error: error,
+      response: body
+    });
+    res.end();
+  });
+}
+
+function checkRecaptcha(grecaptcha, callback){
+  var secret = process.env.RECAPTCHA_SECRET;
+  request({
+    uri: 'https://www.google.com/recaptcha/api/siteverify?secret='+secret+'&response='+grecaptcha,
+    method: 'POST',
+    json: true
+  }, function(error, response, body){
+    callback(body.success);
+  });
+}
