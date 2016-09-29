@@ -159,8 +159,6 @@
 	    var roomsData = this.state.roomsData;
 	    var socket = io.connect('', { query: 'room=' + room });
 	    socket.on('received', function (data) {
-	      console.log('received a request in', room);
-	      console.log(data);
 	      var roomData = _this2.state.roomsData[room];
 	      roomData.requests.push(data);
 	      _this2.setRoomData(room, roomData);
@@ -44168,8 +44166,6 @@
 	  base0F: '#cc6633'
 	};
 	
-	//http://localhost:4000/api/v1/room/hello
-	
 	var Room = exports.Room = _react2.default.createClass({
 	  displayName: 'Room',
 	
@@ -44237,12 +44233,14 @@
 	    setRoomData: _react2.default.PropTypes.func
 	  },
 	  render: function render() {
-	    var jsons = this.props.roomData.requests.map(function (elem, i) {
-	      return _react2.default.createElement(_reactJsonTree2.default, {
+	    var jsons = [];
+	    for (var i = this.props.roomData.requests.length - 1; i >= 0; i--) {
+	      var elem = this.props.roomData.requests[i];
+	      jsons.push(_react2.default.createElement(_reactJsonTree2.default, {
 	        key: i,
 	        data: elem,
-	        theme: theme });
-	    });
+	        theme: theme }));
+	    }
 	    if (!jsons.length) {
 	      jsons.push(_react2.default.createElement(
 	        'span',
@@ -44405,8 +44403,10 @@
 	    list: _react2.default.PropTypes.array
 	  },
 	  render: function render() {
-	    var jsons = this.props.list.map(function (elem, i) {
-	      return _react2.default.createElement(
+	    var jsons = [];
+	    for (var i = this.props.list.length - 1; i >= 0; i--) {
+	      var elem = this.props.list[i];
+	      jsons.push(_react2.default.createElement(
 	        'tr',
 	        {
 	          key: i },
@@ -44424,8 +44424,8 @@
 	            data: elem.response,
 	            theme: theme }) : null
 	        )
-	      );
-	    });
+	      ));
+	    }
 	    if (!jsons.length) {
 	      jsons.push(_react2.default.createElement(
 	        'tr',

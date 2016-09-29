@@ -72,8 +72,6 @@ var App = React.createClass({
     var roomsData = this.state.roomsData;
     var socket = io.connect('', {query: 'room='+room});
     socket.on('received', (data) => {
-      console.log('received a request in', room);
-      console.log(data);
       var roomData = this.state.roomsData[room];
       roomData.requests.push(data);
       this.setRoomData(room, roomData);

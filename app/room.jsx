@@ -25,8 +25,6 @@ var theme = {
   base0F: '#cc6633'
 };
 
-//http://localhost:4000/api/v1/room/hello
-
 export var Room = React.createClass({
   propTypes: {
     roomsData: React.PropTypes.object,
@@ -76,14 +74,16 @@ var RequestList = React.createClass({
     setRoomData: React.PropTypes.func
   },
   render: function(){
-    var jsons = this.props.roomData.requests.map(function(elem, i){
-      return (
+    var jsons = [];
+    for (var i = this.props.roomData.requests.length-1; i >= 0; i--){
+      var elem = this.props.roomData.requests[i];
+      jsons.push(
         <JSONTree
           key={i}
           data={elem}
           theme={theme}/>
       );
-    });
+    }
     if (!jsons.length){
       jsons.push(<span key={0}>There are not yet any requests</span>);
     }
@@ -220,8 +220,10 @@ var RequestResponseList = React.createClass({
     list: React.PropTypes.array
   },
   render: function(){
-    var jsons = this.props.list.map(function(elem, i){
-      return (
+    var jsons = [];
+    for (var i = this.props.list.length-1; i >= 0; i--){
+      var elem = this.props.list[i];
+      jsons.push(
         <tr
           key={i}>
           <td>
@@ -239,7 +241,7 @@ var RequestResponseList = React.createClass({
           </td>
         </tr>
       );
-    });
+    }
     if (!jsons.length){
       jsons.push(<tr key={0}><td>There are not yet any requests sent</td></tr>)
     }
