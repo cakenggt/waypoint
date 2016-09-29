@@ -79,9 +79,17 @@ var RequestList = React.createClass({
           data={elem}/>
       );
     });
+    if (!jsons.length){
+      jsons.push(<span>There are not yet any requests</span>);
+    }
     return (
-      <div>
-        {jsons}
+      <div
+        className="request-list">
+        <h3>Requests</h3>
+        <div
+          className="json-list">
+          {jsons}
+        </div>
       </div>
     )
   }
@@ -111,6 +119,7 @@ var RequestControl = React.createClass({
           null
         }
         <span
+          className="btn"
           onClick={this.sendRequest}>Send Request</span>
         <RequestResponseList
           list={this.props.roomData.madeRequests}/>

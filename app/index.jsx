@@ -80,6 +80,7 @@ var Index = withRouter(React.createClass({
           onChange={this.onRoomChange}
           onKeyPress={this.handleKeyPress}/>
         <span
+          className="btn"
           onClick={this.goToRoom}>Go</span>
       </div>
     );
@@ -109,7 +110,16 @@ var Index = withRouter(React.createClass({
 
 var About = React.createClass({
   render: function(){
-    return null;
+    return (
+      <div>
+        <h2>What is Waypoint?</h2>
+        <p>
+          Waypoint is a tool for you to test your api endpoints.
+
+          Use
+        </p>
+      </div>
+    );
   }
 });
 

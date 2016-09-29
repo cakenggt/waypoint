@@ -166,6 +166,7 @@
 	      _react2.default.createElement(
 	        'span',
 	        {
+	          className: 'btn',
 	          onClick: this.goToRoom },
 	        'Go'
 	      )
@@ -198,7 +199,20 @@
 	  displayName: 'About',
 	
 	  render: function render() {
-	    return null;
+	    return _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(
+	        'h2',
+	        null,
+	        'What is Waypoint?'
+	      ),
+	      _react2.default.createElement(
+	        'p',
+	        null,
+	        'Waypoint is a tool for you to test your api endpoints. Use'
+	      )
+	    );
 	  }
 	});
 	
@@ -44139,10 +44153,28 @@
 	        key: i,
 	        data: elem });
 	    });
+	    if (!jsons.length) {
+	      jsons.push(_react2.default.createElement(
+	        'span',
+	        null,
+	        'There are not yet any requests'
+	      ));
+	    }
 	    return _react2.default.createElement(
 	      'div',
-	      null,
-	      jsons
+	      {
+	        className: 'request-list' },
+	      _react2.default.createElement(
+	        'h3',
+	        null,
+	        'Requests'
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        {
+	          className: 'json-list' },
+	        jsons
+	      )
 	    );
 	  }
 	});
@@ -44172,6 +44204,7 @@
 	      _react2.default.createElement(
 	        'span',
 	        {
+	          className: 'btn',
 	          onClick: this.sendRequest },
 	        'Send Request'
 	      ),
