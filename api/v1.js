@@ -19,7 +19,12 @@ module.exports = function(options){
       method: req.method,
       headers: req.headers,
       url: req.url,
-      body: req.body
+      body: req.body,
+      ip: req.ip,
+      xhr: req.xhr,
+      protocol: req.protocol,
+      query: req.query,
+      cookies: req.cookies
     };
     io.to(req.params.room).emit('received', request);
     res.end();

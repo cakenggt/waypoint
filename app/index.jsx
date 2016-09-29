@@ -56,7 +56,7 @@ var Room = React.createClass({
   },
   render: function(){
     var room = this.props.params.room;
-    var link = 'https://api-waypoint.herokuapp.com/api/v1/'+room;
+    var link = 'https://api-waypoint.herokuapp.com/api/v1/room/'+room;
     return (
       <div>
         <h2>Room {room}</h2>

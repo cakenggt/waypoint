@@ -3,11 +3,15 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const http = require('http').Server(app);
 
 //parse application/json
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+//parse cookies
+app.use(cookieParser());
 
 //Deliver the public folder statically
 app.use(express.static('public'));
