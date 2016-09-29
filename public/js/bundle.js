@@ -283,7 +283,7 @@
 	        _react2.default.createElement(
 	          _reactHljs2.default,
 	          { className: 'bash' },
-	          'curl -X POST -d "fizz=buzz" https:\\/\\/api-waypoint.herokuapp.com/api/v1/room/roomName'
+	          'curl -X POST -d "fizz=buzz" https://api-waypoint.herokuapp.com/api/v1/room/roomName'
 	        )
 	      ),
 	      _react2.default.createElement(

@@ -162,7 +162,7 @@ var Instructions = React.createClass({
         <div>
           You can send a post request from the command line with the following<br/>
           <Highlight className="bash">
-            curl -X POST -d "fizz=buzz" https:\/\/api-waypoint.herokuapp.com/api/v1/room/roomName
+            curl -X POST -d "fizz=buzz" https://api-waypoint.herokuapp.com/api/v1/room/roomName
           </Highlight>
         </div>
         <h2>Sending Requests from Waypoint</h2>
