@@ -21,6 +21,7 @@ h1 {
   text-decoration: none;
   color: black;
   padding: 5px;
+  display: inline-block;
 }
 .link.active {
   font-weight: bold;
