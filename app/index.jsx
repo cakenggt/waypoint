@@ -47,6 +47,10 @@ var App = React.createClass({
             to="/about"
             className="link"
             activeClassName="active">About</Link>
+          <Link
+            to="/instructions"
+            className="link"
+            activeClassName="active">Instructions</Link>
         </div>
         {roomLinks}
         {React.Children.map(this.props.children, child => {
@@ -95,7 +99,7 @@ var Index = withRouter(React.createClass({
       <div
         className="room-input">
         <div>
-          GO TO A ROOM
+          NAME YOUR ROOM
         </div>
         <input
           value={this.state.room}
@@ -138,11 +142,48 @@ var About = React.createClass({
   }
 });
 
+var Instructions = React.createClass({
+  render: function(){
+    return (
+      <div>
+        <h2>Getting a room</h2>
+        <p>
+          On the Home page, entering in a text room name into the text box
+          and then pressing enter will take you to a room. The rooms you have
+          opened this session are displayed at the top of the page, under
+          the links to Home, About, and Instructions
+        </p>
+        <h2>Contacting a room</h2>
+        <p>
+          In every room there is a blue link at the top with the room's
+          api url in it. Have your applications point to this link in
+          order to see their requests.
+        </p>
+        <h2>Sending Requests from clients</h2>
+        <div>
+          You can send a post request from the command line with the following<br/>
+          <pre><code>
+            curl -X POST -d "fizz=buzz" https://api-waypoint.herokuapp.com/api/v1/room/roomName
+          </code></pre>
+        </div>
+        <h2>Sending Requests from Waypoint</h2>
+        <p>
+          Waypoint has basic request ability built into the room page. From there,
+          in the lower section you can input a uri and a method, and the request
+          will be sent out by the backend server. The request and the response will
+          both be displayed in the list following the input boxes.
+        </p>
+      </div>
+    );
+  }
+})
+
 render(
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={Index}/>
       <Route path="about" component={About}/>
+      <Route path="instructions" component={Instructions}/>
       <Route path="room/:room" component={Room}/>
     </Route>
   </Router>,

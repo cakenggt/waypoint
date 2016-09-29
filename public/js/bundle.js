@@ -128,6 +128,14 @@
 	            className: 'link',
 	            activeClassName: 'active' },
 	          'About'
+	        ),
+	        _react2.default.createElement(
+	          _reactRouter.Link,
+	          {
+	            to: '/instructions',
+	            className: 'link',
+	            activeClassName: 'active' },
+	          'Instructions'
 	        )
 	      ),
 	      roomLinks,
@@ -183,7 +191,7 @@
 	      _react2.default.createElement(
 	        'div',
 	        null,
-	        'GO TO A ROOM'
+	        'NAME YOUR ROOM'
 	      ),
 	      _react2.default.createElement('input', {
 	        value: this.state.room,
@@ -233,6 +241,67 @@
 	  }
 	});
 	
+	var Instructions = _react2.default.createClass({
+	  displayName: 'Instructions',
+	
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(
+	        'h2',
+	        null,
+	        'Getting a room'
+	      ),
+	      _react2.default.createElement(
+	        'p',
+	        null,
+	        'On the Home page, entering in a text room name into the text box and then pressing enter will take you to a room. The rooms you have opened this session are displayed at the top of the page, under the links to Home, About, and Instructions'
+	      ),
+	      _react2.default.createElement(
+	        'h2',
+	        null,
+	        'Contacting a room'
+	      ),
+	      _react2.default.createElement(
+	        'p',
+	        null,
+	        'In every room there is a blue link at the top with the room\'s api url in it. Have your applications point to this link in order to see their requests.'
+	      ),
+	      _react2.default.createElement(
+	        'h2',
+	        null,
+	        'Sending Requests from clients'
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        null,
+	        'You can send a post request from the command line with the following',
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'pre',
+	          null,
+	          _react2.default.createElement(
+	            'code',
+	            null,
+	            'curl -X POST -d "fizz=buzz" https://api-waypoint.herokuapp.com/api/v1/room/roomName'
+	          )
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'h2',
+	        null,
+	        'Sending Requests from Waypoint'
+	      ),
+	      _react2.default.createElement(
+	        'p',
+	        null,
+	        'Waypoint has basic request ability built into the room page. From there, in the lower section you can input a uri and a method, and the request will be sent out by the backend server. The request and the response will both be displayed in the list following the input boxes.'
+	      )
+	    );
+	  }
+	});
+	
 	(0, _reactDom.render)(_react2.default.createElement(
 	  _reactRouter.Router,
 	  { history: _reactRouter.browserHistory },
@@ -241,6 +310,7 @@
 	    { path: '/', component: App },
 	    _react2.default.createElement(_reactRouter.IndexRoute, { component: Index }),
 	    _react2.default.createElement(_reactRouter.Route, { path: 'about', component: About }),
+	    _react2.default.createElement(_reactRouter.Route, { path: 'instructions', component: Instructions }),
 	    _react2.default.createElement(_reactRouter.Route, { path: 'room/:room', component: _room.Room })
 	  )
 	), document.getElementById('app'));
