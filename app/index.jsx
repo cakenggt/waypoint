@@ -52,7 +52,8 @@ var App = React.createClass({
         {React.Children.map(this.props.children, child => {
           return React.cloneElement(child, {
             roomsData: this.state.roomsData,
-            setRoomData: this.setRoomData
+            setRoomData: this.setRoomData,
+            createRoom: this.createRoom
           });
         })}
       </div>
@@ -61,6 +62,23 @@ var App = React.createClass({
   setRoomData: function(room, data){
     var roomsData = this.state.roomsData;
     roomsData[room] = data;
+    this.setState({roomsData: roomsData});
+  },
+  createRoom: function(room){
+    var roomsData = this.state.roomsData;
+    var socket = io.connect('', {query: 'room='+room});
+    socket.on('received', (data) => {
+      console.log('received a request in', room);
+      console.log(data);
+      var roomData = this.state.roomsData[room];
+      roomData.requests.push(data);
+      this.setRoomData(room, roomData);
+    });
+    roomsData[room] = {
+      requests: [],
+      madeRequests: [],
+      socket: socket
+    };
     this.setState({roomsData: roomsData});
   }
 });
@@ -99,10 +117,7 @@ var Index = withRouter(React.createClass({
   goToRoom: function(){
     var room = this.state.room;
     if (!this.props.roomsData[room]){
-      this.props.setRoomData(room, {
-        requests: [],
-        madeRequests: []
-      });
+      this.props.createRoom(room);
     }
     this.props.router.push('/room/'+room);
   }
@@ -115,8 +130,6 @@ var About = React.createClass({
         <h2>What is Waypoint?</h2>
         <p>
           Waypoint is a tool for you to test your api endpoints.
-
-          Use
         </p>
       </div>
     );

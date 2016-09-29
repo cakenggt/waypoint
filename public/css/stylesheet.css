@@ -29,6 +29,22 @@ h1 {
 }
 .btn {
   padding: 5px;
+  background-color: #afafaf;
+  border-radius: 3px;
+  margin: 5px;
+  display: inline-block;
+  transition: all 0.1s;
+  border: 1px #afafaf solid;
+  cursor: pointer;
+}
+.btn:hover {
+  background-color: #cfcfcf;
+  border-color: #cfcfcf;
+}
+.btn:active {
+  background-color: #cfcfcf;
+  border-color: #000000;
+  color: #565656;
 }
 .request-list {
   text-align: center;
@@ -39,4 +55,11 @@ h1 {
   border: solid 1px;
   border-radius: 3px;
   margin: 10px 0px;
+}
+.request-controls {
+  padding: 3px;
+}
+input {
+  margin: 2px;
+  padding: 7px;
 }

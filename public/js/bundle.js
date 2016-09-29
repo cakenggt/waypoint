@@ -134,7 +134,8 @@
 	      _react2.default.Children.map(this.props.children, function (child) {
 	        return _react2.default.cloneElement(child, {
 	          roomsData: _this.state.roomsData,
-	          setRoomData: _this.setRoomData
+	          setRoomData: _this.setRoomData,
+	          createRoom: _this.createRoom
 	        });
 	      })
 	    );
@@ -142,6 +143,25 @@
 	  setRoomData: function setRoomData(room, data) {
 	    var roomsData = this.state.roomsData;
 	    roomsData[room] = data;
+	    this.setState({ roomsData: roomsData });
+	  },
+	  createRoom: function createRoom(room) {
+	    var _this2 = this;
+	
+	    var roomsData = this.state.roomsData;
+	    var socket = io.connect('', { query: 'room=' + room });
+	    socket.on('received', function (data) {
+	      console.log('received a request in', room);
+	      console.log(data);
+	      var roomData = _this2.state.roomsData[room];
+	      roomData.requests.push(data);
+	      _this2.setRoomData(room, roomData);
+	    });
+	    roomsData[room] = {
+	      requests: [],
+	      madeRequests: [],
+	      socket: socket
+	    };
 	    this.setState({ roomsData: roomsData });
 	  }
 	});
@@ -186,10 +206,7 @@
 	  goToRoom: function goToRoom() {
 	    var room = this.state.room;
 	    if (!this.props.roomsData[room]) {
-	      this.props.setRoomData(room, {
-	        requests: [],
-	        madeRequests: []
-	      });
+	      this.props.createRoom(room);
 	    }
 	    this.props.router.push('/room/' + room);
 	  }
@@ -210,7 +227,7 @@
 	      _react2.default.createElement(
 	        'p',
 	        null,
-	        'Waypoint is a tool for you to test your api endpoints. Use'
+	        'Waypoint is a tool for you to test your api endpoints.'
 	      )
 	    );
 	  }
@@ -44072,14 +44089,8 @@
 	  },
 	  componentDidMount: function componentDidMount() {
 	    var room = this.props.params.room;
-	    this.setState({
-	      socket: io.connect('', { query: 'room=' + room })
-	    });
 	    if (!this.props.roomsData[room]) {
-	      this.props.setRoomData(room, {
-	        requests: [],
-	        madeRequests: []
-	      });
+	      this.props.createRoom(room);
 	    }
 	  },
 	  render: function render() {
@@ -44108,11 +44119,11 @@
 	        )
 	      ),
 	      _react2.default.createElement(RequestList, {
-	        socket: this.state.socket,
 	        room: this.props.params.room,
 	        roomData: this.props.roomsData[room],
 	        setRoomData: this.props.setRoomData
 	      }),
+	      _react2.default.createElement('hr', null),
 	      _react2.default.createElement(RequestControl, {
 	        room: room,
 	        roomData: this.props.roomsData[room],
@@ -44126,26 +44137,11 @@
 	  displayName: 'RequestList',
 	
 	  propTypes: {
-	    socket: _react2.default.PropTypes.object,
 	    room: _react2.default.PropTypes.string,
 	    roomData: _react2.default.PropTypes.shape({
 	      requests: _react2.default.PropTypes.array
 	    }),
 	    setRoomData: _react2.default.PropTypes.func
-	  },
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	    var _this = this;
-	
-	    if (!this.props.socket && nextProps.socket) {
-	      var room = this.props.room;
-	      nextProps.socket.on('received', function (data) {
-	        console.log('received a request');
-	        console.log(data);
-	        var roomData = _this.props.roomData;
-	        roomData.requests.push(data);
-	        _this.props.setRoomData(room, roomData);
-	      });
-	    }
 	  },
 	  render: function render() {
 	    var jsons = this.props.roomData.requests.map(function (elem, i) {
@@ -44156,7 +44152,7 @@
 	    if (!jsons.length) {
 	      jsons.push(_react2.default.createElement(
 	        'span',
-	        null,
+	        { key: 0 },
 	        'There are not yet any requests'
 	      ));
 	    }
@@ -44167,7 +44163,7 @@
 	      _react2.default.createElement(
 	        'h3',
 	        null,
-	        'Requests'
+	        'Received Requests'
 	      ),
 	      _react2.default.createElement(
 	        'div',
@@ -44192,28 +44188,47 @@
 	    return _react2.default.createElement(
 	      'div',
 	      null,
-	      _react2.default.createElement('input', {
-	        value: this.state.uri,
-	        onChange: this.changeURI }),
-	      _react2.default.createElement('input', {
-	        value: this.state.method,
-	        onChange: this.changeMethod }),
-	      (undefined) ? _react2.default.createElement('div', {
-	        className: 'g-recaptcha',
-	        'data-sitekey': '6LdS7QcUAAAAACyV8AWde4Uafu4taot8kwzwKL4g' }) : null,
 	      _react2.default.createElement(
-	        'span',
+	        'div',
 	        {
-	          className: 'btn',
-	          onClick: this.sendRequest },
-	        'Send Request'
-	      ),
-	      _react2.default.createElement(RequestResponseList, {
-	        list: this.props.roomData.madeRequests })
+	          className: 'request-list' },
+	        _react2.default.createElement(
+	          'h3',
+	          null,
+	          'Send Request'
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          {
+	            className: 'request-controls' },
+	          _react2.default.createElement(
+	            'div',
+	            null,
+	            _react2.default.createElement('input', {
+	              value: this.state.uri,
+	              onChange: this.changeURI }),
+	            _react2.default.createElement('input', {
+	              value: this.state.method,
+	              onChange: this.changeMethod }),
+	            (undefined) ? _react2.default.createElement('div', {
+	              className: 'g-recaptcha',
+	              'data-sitekey': '6LdS7QcUAAAAACyV8AWde4Uafu4taot8kwzwKL4g' }) : null
+	          ),
+	          _react2.default.createElement(
+	            'span',
+	            {
+	              className: 'btn',
+	              onClick: this.sendRequest },
+	            'Send Request'
+	          )
+	        ),
+	        _react2.default.createElement(RequestResponseList, {
+	          list: this.props.roomData.madeRequests })
+	      )
 	    );
 	  },
 	  sendRequest: function sendRequest() {
-	    var _this2 = this;
+	    var _this = this;
 	
 	    var request = {
 	      uri: this.state.uri,
@@ -44243,13 +44258,13 @@
 	      } catch (e) {
 	        formattedData = data;
 	      }
-	      var roomData = _this2.props.roomData;
+	      var roomData = _this.props.roomData;
 	      if (formattedData.error) {
 	        roomData.madeRequests[index].response = formattedData.error;
 	      } else {
 	        roomData.madeRequests[index].response = formattedData.response;
 	      }
-	      _this2.props.setRoomData(_this2.props.room, roomData);
+	      _this.props.setRoomData(_this.props.room, roomData);
 	    });
 	  },
 	  changeURI: function changeURI(e) {
@@ -44286,16 +44301,37 @@
 	        )
 	      );
 	    });
+	    if (!jsons.length) {
+	      jsons.push(_react2.default.createElement(
+	        'tr',
+	        { key: 0 },
+	        _react2.default.createElement(
+	          'td',
+	          null,
+	          'There are not yet any requests sent'
+	        )
+	      ));
+	    }
 	    return _react2.default.createElement(
 	      'div',
 	      null,
 	      _react2.default.createElement(
-	        'table',
+	        'h3',
 	        null,
+	        'Sent Request List'
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        {
+	          className: 'json-list' },
 	        _react2.default.createElement(
-	          'tbody',
+	          'table',
 	          null,
-	          jsons
+	          _react2.default.createElement(
+	            'tbody',
+	            null,
+	            jsons
+	          )
 	        )
 	      )
 	    );

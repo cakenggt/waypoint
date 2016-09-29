@@ -14,14 +14,8 @@ export var Room = React.createClass({
   },
   componentDidMount: function() {
     var room = this.props.params.room;
-    this.setState({
-      socket: io.connect('', {query: 'room='+room})
-    });
     if (!this.props.roomsData[room]){
-      this.props.setRoomData(room, {
-        requests: [],
-        madeRequests: []
-      });
+      this.props.createRoom(room);
     }
   },
   render: function(){
@@ -35,11 +29,11 @@ export var Room = React.createClass({
         <h2>Room {room}</h2>
         <span>To send a request to this room, make it to <a href={link}>{link}</a></span>
         <RequestList
-          socket={this.state.socket}
           room={this.props.params.room}
           roomData={this.props.roomsData[room]}
           setRoomData={this.props.setRoomData}
           />
+        <hr/>
         <RequestControl
           room={room}
           roomData={this.props.roomsData[room]}
@@ -52,24 +46,11 @@ export var Room = React.createClass({
 
 var RequestList = React.createClass({
   propTypes: {
-    socket: React.PropTypes.object,
     room: React.PropTypes.string,
     roomData: React.PropTypes.shape({
       requests: React.PropTypes.array
     }),
     setRoomData: React.PropTypes.func
-  },
-  componentWillReceiveProps: function(nextProps){
-    if (!this.props.socket && nextProps.socket){
-      var room = this.props.room;
-      nextProps.socket.on('received', (data) => {
-        console.log('received a request');
-        console.log(data);
-        var roomData = this.props.roomData;
-        roomData.requests.push(data);
-        this.props.setRoomData(room, roomData);
-      });
-    }
   },
   render: function(){
     var jsons = this.props.roomData.requests.map(function(elem, i){
@@ -80,12 +61,12 @@ var RequestList = React.createClass({
       );
     });
     if (!jsons.length){
-      jsons.push(<span>There are not yet any requests</span>);
+      jsons.push(<span key={0}>There are not yet any requests</span>);
     }
     return (
       <div
         className="request-list">
-        <h3>Requests</h3>
+        <h3>Received Requests</h3>
         <div
           className="json-list">
           {jsons}
@@ -105,24 +86,33 @@ var RequestControl = React.createClass({
   render: function(){
     return (
       <div>
-        <input
-          value={this.state.uri}
-          onChange={this.changeURI}/>
-        <input
-          value={this.state.method}
-          onChange={this.changeMethod}/>
-        {
-          G_RECAPTCHA_ACTIVE ?
-          <div
-            className="g-recaptcha"
-            data-sitekey="6LdS7QcUAAAAACyV8AWde4Uafu4taot8kwzwKL4g"></div> :
-          null
-        }
-        <span
-          className="btn"
-          onClick={this.sendRequest}>Send Request</span>
-        <RequestResponseList
-          list={this.props.roomData.madeRequests}/>
+        <div
+          className="request-list">
+          <h3>Send Request</h3>
+            <div
+              className="request-controls">
+              <div>
+                <input
+                  value={this.state.uri}
+                  onChange={this.changeURI}/>
+                <input
+                  value={this.state.method}
+                  onChange={this.changeMethod}/>
+                {
+                  G_RECAPTCHA_ACTIVE ?
+                  <div
+                    className="g-recaptcha"
+                    data-sitekey="6LdS7QcUAAAAACyV8AWde4Uafu4taot8kwzwKL4g"></div> :
+                  null
+                }
+              </div>
+              <span
+                className="btn"
+                onClick={this.sendRequest}>Send Request</span>
+            </div>
+            <RequestResponseList
+              list={this.props.roomData.madeRequests}/>
+        </div>
       </div>
     );
   },
@@ -197,13 +187,20 @@ var RequestResponseList = React.createClass({
         </tr>
       );
     });
+    if (!jsons.length){
+      jsons.push(<tr key={0}><td>There are not yet any requests sent</td></tr>)
+    }
     return (
       <div>
-        <table>
-          <tbody>
-            {jsons}
-          </tbody>
-        </table>
+        <h3>Sent Request List</h3>
+        <div
+          className="json-list">
+          <table>
+            <tbody>
+              {jsons}
+            </tbody>
+          </table>
+        </div>
       </div>
     )
   }
