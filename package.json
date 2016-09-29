@@ -1,7 +1,7 @@
 {
   "main": "index.js",
   "scripts": {
-    "start": "webpack -p && node index.js",
+    "start": "node index.js",
     "build": "webpack -p",
     "watch": "webpack -d --watch"
   },

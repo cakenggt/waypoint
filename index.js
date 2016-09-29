@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
 //This tells the server to listen
-var port = process.env.PORT || 4000;
+var port = parseInt(process.env.PORT);
 http.listen(port, function(){
   console.log('Example app listening on port '+port+'!');
 });
