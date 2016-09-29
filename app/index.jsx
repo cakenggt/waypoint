@@ -92,14 +92,16 @@ var Index = withRouter(React.createClass({
   render: function() {
     var roomLink = '/room/'+this.state.room;
     return (
-      <div>
+      <div
+        className="room-input">
+        <div>
+          GO TO A ROOM
+        </div>
         <input
           value={this.state.room}
           onChange={this.onRoomChange}
-          onKeyPress={this.handleKeyPress}/>
-        <span
-          className="btn"
-          onClick={this.goToRoom}>Go</span>
+          onKeyPress={this.handleKeyPress}
+          autoFocus/>
       </div>
     );
   },

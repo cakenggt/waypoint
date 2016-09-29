@@ -63,3 +63,16 @@ input {
   margin: 2px;
   padding: 7px;
 }
+.room-input {
+  font-size: 3em;
+  max-width: 600px;
+  margin: 10% auto;
+  text-align: center;
+}
+.room-input input {
+  border-radius: 5px;
+  border: 1px black solid;
+  text-align: center;
+  font-size: 1em;
+  width: 200px
+}

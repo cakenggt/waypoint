@@ -178,18 +178,18 @@
 	    var roomLink = '/room/' + this.state.room;
 	    return _react2.default.createElement(
 	      'div',
-	      null,
+	      {
+	        className: 'room-input' },
+	      _react2.default.createElement(
+	        'div',
+	        null,
+	        'GO TO A ROOM'
+	      ),
 	      _react2.default.createElement('input', {
 	        value: this.state.room,
 	        onChange: this.onRoomChange,
-	        onKeyPress: this.handleKeyPress }),
-	      _react2.default.createElement(
-	        'span',
-	        {
-	          className: 'btn',
-	          onClick: this.goToRoom },
-	        'Go'
-	      )
+	        onKeyPress: this.handleKeyPress,
+	        autoFocus: true })
 	    );
 	  },
 	  onRoomChange: function onRoomChange(e) {
@@ -44204,12 +44204,16 @@
 	          _react2.default.createElement(
 	            'div',
 	            null,
-	            _react2.default.createElement('input', {
-	              value: this.state.uri,
-	              onChange: this.changeURI }),
-	            _react2.default.createElement('input', {
-	              value: this.state.method,
-	              onChange: this.changeMethod }),
+	            _react2.default.createElement(VerticalEntry, {
+	              label: 'URI',
+	              value: _react2.default.createElement('input', {
+	                value: this.state.uri,
+	                onChange: this.changeURI }) }),
+	            _react2.default.createElement(VerticalEntry, {
+	              label: 'Method',
+	              value: _react2.default.createElement('input', {
+	                value: this.state.method,
+	                onChange: this.changeMethod }) }),
 	            (undefined) ? _react2.default.createElement('div', {
 	              className: 'g-recaptcha',
 	              'data-sitekey': '6LdS7QcUAAAAACyV8AWde4Uafu4taot8kwzwKL4g' }) : null
@@ -44272,6 +44276,31 @@
 	  },
 	  changeMethod: function changeMethod(e) {
 	    this.setState({ method: e.target.value });
+	  }
+	});
+	
+	var VerticalEntry = _react2.default.createClass({
+	  displayName: 'VerticalEntry',
+	
+	  render: function render() {
+	    var spanStyle = {
+	      display: 'inline-block'
+	    };
+	    return _react2.default.createElement(
+	      'span',
+	      {
+	        style: spanStyle },
+	      _react2.default.createElement(
+	        'div',
+	        null,
+	        this.props.label
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        null,
+	        this.props.value
+	      )
+	    );
 	  }
 	});
 	

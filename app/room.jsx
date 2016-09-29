@@ -92,12 +92,20 @@ var RequestControl = React.createClass({
             <div
               className="request-controls">
               <div>
-                <input
-                  value={this.state.uri}
-                  onChange={this.changeURI}/>
-                <input
-                  value={this.state.method}
-                  onChange={this.changeMethod}/>
+                <VerticalEntry
+                  label="URI"
+                  value={
+                    <input
+                      value={this.state.uri}
+                      onChange={this.changeURI}/>
+                    }/>
+                <VerticalEntry
+                  label="Method"
+                  value={
+                    <input
+                      value={this.state.method}
+                      onChange={this.changeMethod}/>
+                    }/>
                 {
                   G_RECAPTCHA_ACTIVE ?
                   <div
@@ -161,6 +169,25 @@ var RequestControl = React.createClass({
   },
   changeMethod: function(e){
     this.setState({method: e.target.value});
+  }
+});
+
+var VerticalEntry = React.createClass({
+  render: function(){
+    var spanStyle = {
+      display: 'inline-block'
+    };
+    return (
+      <span
+        style={spanStyle}>
+        <div>
+          {this.props.label}
+        </div>
+        <div>
+          {this.props.value}
+        </div>
+      </span>
+    )
   }
 });
 
