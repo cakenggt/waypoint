@@ -1,25 +1,71 @@
 import 'babel-polyfill';
 import React from 'react';
-import {Router, Route, IndexRoute, Link, browserHistory} from 'react-router';
+import {Router, Route, IndexRoute, IndexLink, Link, browserHistory, withRouter} from 'react-router';
 import {render} from 'react-dom';
-import JSONTree from 'react-json-tree'
+import {Room} from './room.jsx';
 
 var App = React.createClass({
+  getInitialState: function(){
+    return {
+      roomsData: {}
+    }
+  },
   render: function() {
+    var roomNames = Object.keys(this.state.roomsData);
+    var roomLinks;
+    if (roomNames.length){
+      var rooms = roomNames.map(function(elem, i){
+        var link = '/room/'+elem;
+        return (
+          <Link
+            to={link}
+            className="link"
+            activeClassName="active"
+            key={i}>{elem}</Link>
+        );
+      })
+      roomLinks = (
+        <div
+          className='nav'>
+          {rooms}
+        </div>
+      );
+    }
     return (
       <div className="content">
-        <h1>Waypoint</h1>
+        <div
+          className="header">
+          <h1>Waypoint</h1>
+        </div>
+        <div
+          className="nav">
+          <IndexLink
+            to="/"
+            className="link"
+            activeClassName="active">Home</IndexLink>
+          <Link
+            to="/about"
+            className="link"
+            activeClassName="active">About</Link>
+        </div>
+        {roomLinks}
         {React.Children.map(this.props.children, child => {
           return React.cloneElement(child, {
-            data: this.state
+            roomsData: this.state.roomsData,
+            setRoomData: this.setRoomData
           });
         })}
       </div>
     );
+  },
+  setRoomData: function(room, data){
+    var roomsData = this.state.roomsData;
+    roomsData[room] = data;
+    this.setState({roomsData: roomsData});
   }
 });
 
-var Index = React.createClass({
+var Index = withRouter(React.createClass({
   getInitialState: function(){
     return {
       room: ''
@@ -31,8 +77,10 @@ var Index = React.createClass({
       <div>
         <input
           value={this.state.room}
-          onChange={this.onRoomChange}/>
-        <Link to={roomLink}>Go</Link>
+          onChange={this.onRoomChange}
+          onKeyPress={this.handleKeyPress}/>
+        <span
+          onClick={this.goToRoom}>Go</span>
       </div>
     );
   },
@@ -41,185 +89,27 @@ var Index = React.createClass({
     var newText = text.replace(/[^A-z0-9]/, '');
     newText = newText.toLowerCase();
     this.setState({room: newText});
-  }
-});
-
-var Room = React.createClass({
-  getInitialState: function(){
-    return {};
   },
-  componentDidMount: function() {
-    var room = this.props.params.room;
-    this.setState({
-      socket: io.connect('', {query: 'room='+room})
-    });
-  },
-  render: function(){
-    var room = this.props.params.room;
-    var link = 'https://api-waypoint.herokuapp.com/api/v1/room/'+room;
-    return (
-      <div>
-        <h2>Room {room}</h2>
-        <span>To send a request to this room, make it to <a href={link}>{link}</a></span>
-        <RequestList
-          socket={this.state.socket}
-          room={this.props.params.room}
-          />
-        <RequestControl/>
-      </div>
-    )
-  }
-});
-
-var RequestList = React.createClass({
-  propTypes: {
-    socket: React.PropTypes.object,
-    room: React.PropTypes.string
-  },
-  getInitialState: function(){
-    return {
-      requests: []
+  handleKeyPress: function(e){
+    if (e.key === 'Enter'){
+      this.goToRoom();
     }
   },
-  componentWillReceiveProps: function(nextProps){
-    if (!this.props.socket && nextProps.socket){
-      var room = this.props.room;
-      nextProps.socket.on('received', (data) => {
-        console.log('received a request');
-        console.log(data);
-        var requests = this.state.requests;
-        requests.push(data);
-        this.setState({requests: requests});
+  goToRoom: function(){
+    var room = this.state.room;
+    if (!this.props.roomsData[room]){
+      this.props.setRoomData(room, {
+        requests: [],
+        madeRequests: []
       });
     }
-  },
-  render: function(){
-    var jsons = this.state.requests.map(function(elem, i){
-      return (
-        <JSONTree
-          key={i}
-          data={elem}/>
-      );
-    });
-    return (
-      <div>
-        {jsons}
-      </div>
-    )
+    this.props.router.push('/room/'+room);
   }
-});
+}));
 
-var RequestControl = React.createClass({
-  getInitialState: function(){
-    return {
-      history: [],
-      uri: '',
-      method: 'GET'
-    }
-  },
+var About = React.createClass({
   render: function(){
-    return (
-      <div>
-        <input
-          value={this.state.uri}
-          onChange={this.changeURI}/>
-        <input
-          value={this.state.method}
-          onChange={this.changeMethod}/>
-        {
-          G_RECAPTCHA_ACTIVE ?
-          <div
-            className="g-recaptcha"
-            data-sitekey="6LdS7QcUAAAAACyV8AWde4Uafu4taot8kwzwKL4g"></div> :
-          null
-        }
-        <span
-          onClick={this.sendRequest}>Send Request</span>
-        <RequestResponseList
-          list={this.state.history}/>
-      </div>
-    );
-  },
-  sendRequest: function(){
-    var request = {
-      uri: this.state.uri,
-      method: this.state.method
-    };
-    var sending = {
-      uri: this.state.uri,
-      method: this.state.method
-    };
-    if (G_RECAPTCHA_ACTIVE){
-      sending.grecaptcha = grecaptcha.getResponse();
-      grecaptcha.reset();
-    }
-    var index = this.state.history.length;
-    var history = this.state.history;
-    history.push({
-      request: request
-    });
-    this.setState({history: history});
-    $.ajax('/api/v1/request', {
-      data: sending,
-      method: 'POST'
-    })
-    .then(data => {
-      var formattedData;
-      try {
-        formattedData = JSON.parse(data);
-      } catch(e) {
-        formattedData = data;
-      }
-      var history = this.state.history;
-      if (formattedData.error){
-        history[index].response = formattedData.error;
-      }
-      else{
-        history[index].response = formattedData.response;
-      }
-      this.setState({history: history});
-    });
-  },
-  changeURI: function(e){
-    this.setState({uri: e.target.value});
-  },
-  changeMethod: function(e){
-    this.setState({method: e.target.value});
-  }
-});
-
-var RequestResponseList = React.createClass({
-  propTypes: {
-    list: React.PropTypes.array
-  },
-  render: function(){
-    var jsons = this.props.list.map(function(elem, i){
-      return (
-        <tr
-          key={i}>
-          <td>
-            <JSONTree
-              data={elem.request}/>
-          </td>
-          <td>
-            {
-              elem.response ?
-              <JSONTree
-                data={elem.response}/> : null
-            }
-          </td>
-        </tr>
-      );
-    });
-    return (
-      <div>
-        <table>
-          <tbody>
-            {jsons}
-          </tbody>
-        </table>
-      </div>
-    )
+    return null;
   }
 });
 
@@ -227,6 +117,7 @@ render(
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={Index}/>
+      <Route path="about" component={About}/>
       <Route path="room/:room" component={Room}/>
     </Route>
   </Router>,

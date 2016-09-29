@@ -1,0 +1,25 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+h1, h2, h3, h4, h5 {
+  font-family: 'Megrim', cursive;
+}
+h1 {
+  font-size: 4em;
+}
+.header {
+  text-align: center;
+}
+.link {
+  text-decoration: none;
+  color: black;
+  padding: 5px;
+  background-color: white;
+  border-radius: 3px;
+}
+.link .active {
+  background-color: #afafaf;
+}
+.nav {
+  text-align: center;
+}
