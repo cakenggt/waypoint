@@ -7,8 +7,8 @@ import JSONTree from 'react-json-tree'
 var App = React.createClass({
   render: function() {
     return (
-      <h1>Waypoint</h1>
       <div className="content">
+        <h1>Waypoint</h1>
         {React.Children.map(this.props.children, child => {
           return React.cloneElement(child, {
             data: this.state
