@@ -257,12 +257,16 @@
 	    }).then(function (data) {
 	      var formattedData;
 	      try {
-	        formattedData = JSON.parse(data.response);
+	        formattedData = JSON.parse(data);
 	      } catch (e) {
-	        formattedData = data.response;
+	        formattedData = data;
 	      }
 	      var history = _this3.state.history;
-	      history[index].response = formattedData;
+	      if (formattedData.error) {
+	        history[index].response = formattedData.error;
+	      } else {
+	        history[index].response = formattedData.response;
+	      }
 	      _this3.setState({ history: history });
 	    });
 	  },

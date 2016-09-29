@@ -165,12 +165,17 @@ var RequestControl = React.createClass({
     .then(data => {
       var formattedData;
       try {
-        formattedData = JSON.parse(data.response);
+        formattedData = JSON.parse(data);
       } catch(e) {
-        formattedData = data.response;
+        formattedData = data;
       }
       var history = this.state.history;
-      history[index].response = formattedData;
+      if (formattedData.error){
+        history[index].response = formattedData.error;
+      }
+      else{
+        history[index].response = formattedData.response;
+      }
       this.setState({history: history});
     });
   },
