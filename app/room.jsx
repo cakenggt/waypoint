@@ -2,7 +2,30 @@ import 'babel-polyfill';
 import React from 'react';
 import {Router, Route, IndexRoute, IndexLink, Link, browserHistory} from 'react-router';
 import {render} from 'react-dom';
-import JSONTree from 'react-json-tree'
+import JSONTree from 'react-json-tree';
+
+var theme = {
+  scheme: 'monokai',
+  author: 'wimer hazenberg (http://www.monokai.nl)',
+  base00: '#272822',
+  base01: '#383830',
+  base02: '#49483e',
+  base03: '#75715e',
+  base04: '#a59f85',
+  base05: '#f8f8f2',
+  base06: '#f5f4f1',
+  base07: '#f9f8f5',
+  base08: '#f92672',
+  base09: '#fd971f',
+  base0A: '#f4bf75',
+  base0B: '#a6e22e',
+  base0C: '#a1efe4',
+  base0D: '#66d9ef',
+  base0E: '#ae81ff',
+  base0F: '#cc6633'
+};
+
+//http://localhost:4000/api/v1/room/hello
 
 export var Room = React.createClass({
   propTypes: {
@@ -57,7 +80,8 @@ var RequestList = React.createClass({
       return (
         <JSONTree
           key={i}
-          data={elem}/>
+          data={elem}
+          theme={theme}/>
       );
     });
     if (!jsons.length){
@@ -202,13 +226,15 @@ var RequestResponseList = React.createClass({
           key={i}>
           <td>
             <JSONTree
-              data={elem.request}/>
+              data={elem.request}
+              theme={theme}/>
           </td>
           <td>
             {
               elem.response ?
               <JSONTree
-                data={elem.response}/> : null
+                data={elem.response}
+                theme={theme}/> : null
             }
           </td>
         </tr>
