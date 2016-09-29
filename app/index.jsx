@@ -7,6 +7,7 @@ import JSONTree from 'react-json-tree'
 var App = React.createClass({
   render: function() {
     return (
+      <h1>Waypoint</h1>
       <div className="content">
         {React.Children.map(this.props.children, child => {
           return React.cloneElement(child, {
@@ -58,7 +59,7 @@ var Room = React.createClass({
     var link = 'https://api-waypoint.herokuapp.com/api/v1/'+room;
     return (
       <div>
-        <h1>Room {room}</h1>
+        <h2>Room {room}</h2>
         <span>To send a request to this room, make it to <a href={link}>{link}</a></span>
         <RequestList
           socket={this.state.socket}
