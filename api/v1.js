@@ -49,6 +49,13 @@ module.exports = function(options){
       passOnRequest(req, res);
     }
   });
+
+  app.get(prefix+'recaptcha', function(req, res){
+    res.json({
+      enabled: process.env.G_RECAPTCHA_ACTIVE == 'true'
+    });
+    res.end();
+  });
 };
 
 function passOnRequest(req, res){

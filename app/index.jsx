@@ -8,7 +8,8 @@ import {Room} from './room.jsx';
 var App = React.createClass({
   getInitialState: function(){
     return {
-      roomsData: {}
+      roomsData: {},
+      recaptchaEnabled: false
     }
   },
   render: function() {
@@ -58,7 +59,9 @@ var App = React.createClass({
           return React.cloneElement(child, {
             roomsData: this.state.roomsData,
             setRoomData: this.setRoomData,
-            createRoom: this.createRoom
+            createRoom: this.createRoom,
+            setRecaptchaEnabled: this.setRecaptchaEnabled,
+            recaptchaEnabled: this.state.recaptchaEnabled
           });
         })}
       </div>
@@ -83,6 +86,9 @@ var App = React.createClass({
       socket: socket
     };
     this.setState({roomsData: roomsData});
+  },
+  setRecaptchaEnabled: function(enabled){
+    this.setState({recaptchaEnabled: enabled});
   }
 });
 

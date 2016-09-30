@@ -84,3 +84,7 @@ input {
 pre {
   display: inline-block;
 }
+#g-recaptcha {
+  display: flex;
+  justify-content: center;
+}

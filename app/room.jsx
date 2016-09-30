@@ -38,6 +38,7 @@ export var Room = React.createClass({
     if (!this.props.roomsData[room]){
       this.props.createRoom(room);
     }
+    this.checkRecaptcha();
   },
   render: function(){
     var room = this.props.params.room;
@@ -59,9 +60,16 @@ export var Room = React.createClass({
           room={room}
           roomData={this.props.roomsData[room]}
           setRoomData={this.props.setRoomData}
+          recaptchaEnabled={this.props.recaptchaEnabled}
           />
       </div>
     )
+  },
+  checkRecaptcha: function(){
+    $.ajax('/api/v1/recaptcha')
+    .then(data => {
+      this.props.setRecaptchaEnabled(data.enabled);
+    });
   }
 });
 
@@ -107,6 +115,23 @@ var RequestControl = React.createClass({
       method: 'GET'
     }
   },
+  componentDidMount: function(){
+    //This is the initial render if it is turned on
+    if (this.props.recaptchaEnabled){
+      console.log('rendering recaptcha');
+      grecaptcha.render('g-recaptcha', {
+        'sitekey': "6LdS7QcUAAAAACyV8AWde4Uafu4taot8kwzwKL4g"
+      });
+    }
+  },
+  componentDidUpdate: function(prevProps, prevState){
+    //This is for if it gets turned on between a user nagivating away
+    if (this.props.recaptchaEnabled && !prevProps.recaptchaEnabled){
+      grecaptcha.render('g-recaptcha', {
+        'sitekey': "6LdS7QcUAAAAACyV8AWde4Uafu4taot8kwzwKL4g"
+      });
+    }
+  },
   render: function(){
     return (
       <div>
@@ -131,10 +156,8 @@ var RequestControl = React.createClass({
                       onChange={this.changeMethod}/>
                     }/>
                 {
-                  G_RECAPTCHA_ACTIVE ?
-                  <div
-                    className="g-recaptcha"
-                    data-sitekey="6LdS7QcUAAAAACyV8AWde4Uafu4taot8kwzwKL4g"></div> :
+                  this.props.recaptchaEnabled ?
+                  <div id="g-recaptcha"></div> :
                   null
                 }
               </div>
@@ -157,7 +180,7 @@ var RequestControl = React.createClass({
       uri: this.state.uri,
       method: this.state.method
     };
-    if (G_RECAPTCHA_ACTIVE){
+    if (this.props.recaptchaEnabled){
       sending.grecaptcha = grecaptcha.getResponse();
       grecaptcha.reset();
     }
